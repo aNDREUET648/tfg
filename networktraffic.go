@@ -8,15 +8,15 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog/v2"
-	framework "k8s.io/kubernetes/pkg/scheduler/framework/v1alpha1"
-	"sigs.k8s.io/scheduler-plugins/pkg/apis/config"
+	"k8s.io/kubernetes/pkg/scheduler/framework"
+	"sigs.k8s.io/scheduler-plugins/apis/config"
 )
 
 // NetworkTraffic is a score plugin that favors nodes based on their
 // network traffic amount. Nodes with less traffic are favored.
 // Implements framework.ScorePlugin
 type NetworkTraffic struct {
-	handle     framework.FrameworkHandle
+	handle     framework.Handle
 	prometheus *PrometheusHandle
 }
 
@@ -26,7 +26,7 @@ const Name = "NetworkTraffic"
 var _ = framework.ScorePlugin(&NetworkTraffic{})
 
 // New initializes a new plugin and returns it.
-func New(obj runtime.Object, h framework.FrameworkHandle) (framework.Plugin, error) {
+func New(obj runtime.Object, h framework.Handle) (framework.Plugin, error) {
 	args, ok := obj.(*config.NetworkTrafficArgs)
 	if !ok {
 		return nil, fmt.Errorf("[NetworkTraffic] want args to be of type NetworkTrafficArgs, got %T", obj)
