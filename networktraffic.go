@@ -8,8 +8,8 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog/v2"
-	"k8s.io/kubernetes/pkg/scheduler/framework"
-	"sigs.k8s.io/scheduler-plugins/apis/config"
+	framework "k8s.io/kubernetes/pkg/scheduler/framework"
+	"sigs.k8s.io/scheduler-plugins/pkg/apis/config"
 )
 
 // NetworkTraffic is a score plugin that favors nodes based on their
@@ -32,7 +32,7 @@ func New(obj runtime.Object, h framework.Handle) (framework.Plugin, error) {
 		return nil, fmt.Errorf("[NetworkTraffic] want args to be of type NetworkTrafficArgs, got %T", obj)
 	}
 
-	klog.Infof("[NetworkTraffic] args received. NetworkInterface: %s; TimeRangeInMinutes: %d, Address: %s", args.NetworkInterface, args.TimeRangeInMinutes, args.Address)
+	klog.Infof("[NetworkTraffic] args received. NetworkInterface: %s; TimeRangeInMinutes: %d, Adreca: %s", args.NetworkInterface, args.TimeRangeInMinutes, args.Address)
 
 	return &NetworkTraffic{
 		handle:     h,
@@ -51,7 +51,7 @@ func (n *NetworkTraffic) Score(ctx context.Context, state *framework.CycleState,
 		return 0, framework.NewStatus(framework.Error, fmt.Sprintf("error getting node bandwidth measure: %s", err))
 	}
 
-	klog.Infof("[NetworkTraffic] node '%s' bandwidth: %s", nodeName, nodeBandwidth.Value)
+	klog.Infof("[NetworkTraffic] Nom de node: '%s' Ample de banda: %s", nodeName, nodeBandwidth.Value)
 	return int64(nodeBandwidth.Value), nil
 }
 
@@ -71,6 +71,6 @@ func (n *NetworkTraffic) NormalizeScore(ctx context.Context, state *framework.Cy
 		scores[i].Score = framework.MaxNodeScore - (node.Score * framework.MaxNodeScore / higherScore)
 	}
 
-	klog.Infof("[NetworkTraffic] Nodes final score: %v", scores)
+	klog.Infof("[NetworkTraffic] Nodes puntuacio final: %v", scores)
 	return nil
 }

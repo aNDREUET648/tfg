@@ -13,7 +13,7 @@ import (
 
 const (
 	// nodeMeasureQueryTemplate is the template string to get the query for the node used bandwidth
-	nodeMeasureQueryTemplate = "sum_over_time(node_network_receive_bytes_total{kubernetes_node=\"%s\",device=\"%s\"}[%s])"
+	nodeMeasureQueryTemplate = "sum_over_time(node_network_receive_bytes_total{instance=\"%s\",device=\"%s\"}[%s])"
 )
 
 // Handles the interaction of the networkplugin with Prometheus
@@ -49,7 +49,7 @@ func (p *PrometheusHandle) GetNodeBandwidthMeasure(node string) (*model.Sample, 
 
 	nodeMeasure := res.(model.Vector)
 	if len(nodeMeasure) != 1 {
-		return nil, fmt.Errorf("[NetworkTraffic] Invalid response, expected 1 value, got %d", len(nodeMeasure))
+		return nil, fmt.Errorf("[NetworkTraffic] Invalid response, s'espera un 1 i, tengot %d", len(nodeMeasure))
 	}
 
 	return nodeMeasure[0], nil
