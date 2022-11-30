@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scheduler-config
+  namespace: {{ .Values.scheduler.namespace }}
+data:
+  scheduler-config.yaml: |
+    apiVersion: kubescheduler.config.k8s.io/v1beta1
+    kind: KubeSchedulerConfiguration
+    leaderElection:
+      leaderElect: false
+    profiles:
+    - schedulerName: scheduler-plugins-scheduler
+      plugins:
+        queueSort:
+          enabled:
+          - name: Coscheduling
+          disabled:
+          - name: "*"
+        preFilter:
+          enabled:
+          - name: Coscheduling
+        permit:
+          enabled:
+          - name: Coscheduling
+        score:
+          enabled:
+          - name: NetworkTraffic
+          disabled:
+          - name: "*"
+        reserve:
+          enabled:
+          - name: Coscheduling
+        postBind:
+          enabled:
+          - name: Coscheduling
+      pluginConfig:
+      - name: Coscheduling
+        args:
+          permitWaitingTimeSeconds: 10
+          deniedPGExpirationTimeSeconds: 3
+      - name: NetworkTraffic
+        args:
+          prometheusAddress: "http://10.152.183.78:9090/"
+          networkInterface: "lo"
+          timeRangeInMinutes: 3
